@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发票汇总工具</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>发票汇总工具</h1>
+    </header>
+
+    <div class="main-content">
+      <!-- 左侧：上传区域和操作按钮 -->
+      <div class="left-panel">
+        <div class="upload-section">
+          <div class="upload-area" id="dropZone">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p>拖拽文件到此处或 <button type="button" id="browseBtn">选择文件</button></p>
+            <p class="help-text">支持上传OFD/PDF/JPG/PNG格式文件</p>
+            <input type="file" id="fileInput" accept=".ofd,.pdf,.jpg,.jpeg,.png" multiple style="display: none;">
+          </div>
+        </div>
+
+        <!-- 已上传发票列表 -->
+        <div class="uploaded-list-section">
+          <div class="list-header">
+            <h3>已上传发票 <span id="invoiceCount">(0)</span></h3>
+            <small style="color: red; font-size: 0.7rem;">*拖拽可调整合并打印排序</small>
+          </div>
+          <div class="invoices-list" id="invoicesList" draggable="false"></div>
+        </div>
+      </div>
+
+      <!-- 右侧：设置区域 -->
+      <div class="right-panel">
+        <!-- 文件命名设置 -->
+        <div class="setting-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>文件命名设置</h3>
+            <small style="color: red; font-size: 0.7rem;">*非必填，文件导出命名按照"名称+产品+周期"生成</small>
+          </div>
+          <div class="input-group">
+            <label for="projectName">项目名称</label>
+            <input type="text" id="projectName" placeholder="请输入项目名称">
+          </div>
+          <div class="input-group">
+            <label for="product">产品</label>
+            <input type="text" id="product" placeholder="请输入产品名称">
+          </div>
+          <div class="input-group">
+            <label>项目周期</label>
+            <div class="date-range-inputs">
+              <input type="date" id="projectCycleStart" placeholder="开始日期">
+              <span class="date-separator">-</span>
+              <input type="date" id="projectCycleEnd" placeholder="结束日期">
+            </div>
+          </div>
+        </div>
+
+        <!-- 页面设置 -->
+        <div class="setting-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>页面设置</h3>
+            <small style="color: red; font-size: 0.7rem;">*默认按照A4纸，每页3张发票导出</small>
+          </div>
+          <div class="input-group">
+            <label for="paperType">纸张类型</label>
+            <select id="paperType">
+              <option value="A4">A4</option>
+              <option value="A3">A3</option>
+              <option value="letter">Letter</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="orientation">纸张方向</label>
+            <select id="orientation">
+              <option value="portrait">纵向</option>
+              <option value="landscape">横向</option>
+            </select>
+          </div>
+          <div class="input-group" id="customSize" style="display: none;">
+            <label>自定义尺寸 (mm)</label>
+            <div class="size-inputs">
+              <input type="number" id="customWidth" placeholder="宽度" min="50" max="1000">
+              <span class="size-separator">×</span>
+              <input type="number" id="customHeight" placeholder="高度" min="50" max="1000">
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="invoicePerSheet">每页发票数</label>
+            <select id="invoicePerSheet">
+              <option value="1">1张/页</option>
+              <option value="2">2张/页</option>
+              <option value="3" selected>3张/页</option>
+              <option value="4">4张/页</option>
+              <option value="6">6张/页</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作按钮放在页面底部 -->
+    <div class="action-buttons">
+      <button id="previewBtn" class="btn-primary">生成预览</button>
+      <button id="exportBtn" class="btn-secondary">导出发票PDF</button>
+    </div>
+
+    <!-- 全屏预览模态框 -->
+    <div id="fullscreenPreview" class="fullscreen-preview" style="display: none;">
+      <div class="Preview-overlay"></div>
+      <div class="Preview-content-wrapper">
+        <div class="Preview-header">
+          <div class="Preview-controls">
+            <button id="prevPageBtn" class="nav-btn">‹ 上一页</button>
+            <h2>预览 - 第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页</h2>
+            <button id="nextPageBtn" class="nav-btn">下一页 ›</button>
+          </div>
+          <button id="closePreviewBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="Preview-body">
+          <canvas id="previewCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p>处理中...</p>
+    </div>
+  </div>
+  <!-- 在这里添加PDF.js库 -->
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js"></script>
+  <script>
+    // 设置PDF.js worker路径
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.worker.min.js';
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
