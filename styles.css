@@ -550,37 +550,447 @@ body {
   display: none;
 }
 
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .main-content {
-    flex-direction: column;
+/* 响应式设计 - 移动端适配 */
+@media screen and (max-width: 768px) {
+  html, body {
+    height: auto;
+    overflow-x: hidden; /* 防止水平滚动条 */
   }
   
-  .left-panel, .right-panel {
-    width: 100%;
+  body {
+    margin: 0;
+    padding: 0.5rem 0.3rem; /* 减少左右padding */
+    background: linear-gradient(135deg, #2b3e50 0%, #3a506b 100%);
   }
-}
-
-@media (max-width: 768px) {
+  
   .container {
-    padding: 0.4rem;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    padding: 0.5rem;
+    gap: 0.8rem;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
   .header h1 {
     font-size: 1.4rem;
+    margin: 0.3rem 0;
+    text-align: center;
   }
   
-  .action-buttons {
+  .main-content {
+    display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.8rem;
+    width: 100%;
+  }
+  
+  .left-panel, .right-panel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .upload-section {
+    min-height: 120px;
+    padding: 0.8rem;
+    width: 100%;
+  }
+  
+  .upload-area {
+    padding: 0.8rem;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .upload-area p {
+    font-size: 0.85rem;
+    margin: 0.3rem 0;
+    text-align: center;
+  }
+  
+  .upload-icon {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .uploaded-list-section {
+    height: 220px; /* 固定高度以便滚动 */
+    min-height: 220px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .invoices-list {
+    padding: 0.4rem 0;
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    border: 1px solid #e0e8f0;
+    border-radius: 5px;
+    background: #fafdff;
+  }
+  
+  .invoice-item {
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid #e0e8f0;
+  }
+  
+  .info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .info p {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0.1rem 0;
+  }
+  
+  .remove-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .setting-card {
+    padding: 0.8rem;
+    width: 100%;
+  }
+  
+  .setting-card h3 {
+    font-size: 1.1rem;
+    margin: 0 0 0.6rem 0;
+  }
+  
+  .input-group {
+    margin-bottom: 0.8rem;
+  }
+  
+  .input-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  
+  .input-group input,
+  .input-group select {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.6rem;
+    width: 100%;
+    box-sizing: border-box; /* 确保padding不影响宽度 */
   }
   
   .date-range-inputs {
-    flex-direction: column;
+    display: flex;
     gap: 0.3rem;
+    align-items: center;
   }
   
   .date-separator {
+    margin: 0 0.3rem;
+  }
+  
+  .size-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .size-separator {
     align-self: center;
+    margin: 0 0.3rem;
+  }
+  
+  .size-inputs input {
+    flex: 1;
+    width: auto;
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  
+  .btn-primary, .btn-secondary {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  
+  /* 全屏预览移动端优化 */
+  .fullscreen-preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: none;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .Preview-content-wrapper {
+    position: relative;
+    width: 95%;
+    max-width: 100%;
+    height: 80vh;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+  
+  .Preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: linear-gradient(135deg, #2b3e50 0%, #3a506b 100%);
+    color: white;
+    flex-shrink: 0;
+  }
+  
+  .Preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 1;
+    justify-content: space-between;
+  }
+  
+  .Preview-header h2 {
+    color: white;
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 500;
+    text-align: center;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .nav-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  
+  .close-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+  
+  .Preview-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 0.8rem;
+    overflow: auto;
+  }
+  
+  .Preview-body canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    background: white;
+    border: 1px solid #e0e6ed;
+  }
+  
+  /* 特别针对更小屏幕的优化 */
+  @media screen and (max-width: 480px) {
+    body {
+      padding: 0.3rem 0.2rem;
+    }
+    
+    .container {
+      padding: 0.3rem;
+      gap: 0.5rem;
+    }
+    
+    .upload-area {
+      padding: 0.6rem;
+    }
+    
+    .upload-area p {
+      font-size: 0.75rem;
+      line-height: 1.3;
+    }
+    
+    .header h1 {
+      font-size: 1.1rem;
+    }
+    
+    .setting-card {
+      padding: 0.5rem;
+    }
+    
+    .setting-card > div:first-child {
+      margin-top: 0.3rem;
+    }
+    
+    .setting-card h3 {
+      font-size: 1rem;
+    }
+    
+    .input-group {
+      margin-bottom: 0.6rem;
+    }
+    
+    .input-group label {
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+    
+    .input-group input,
+    .input-group select {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.5rem;
+    }
+    
+    .date-range-inputs {
+      flex-direction: column;
+    }
+    
+    .date-separator {
+      display: none;
+    }
+    
+    .size-inputs {
+      flex-direction: column;
+    }
+    
+    .size-separator {
+      display: none; /* 隐藏×符号，因为是垂直排列 */
+    }
+    
+    .size-inputs input {
+      width: 100%;
+    }
+    
+    .action-buttons {
+      flex-direction: column; /* 小屏幕上按钮竖排 */
+      padding: 0.2rem;
+    }
+    
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      min-width: auto;
+      padding: 0.8rem;
+      margin: 0.2rem 0;
+    }
+    
+    .invoice-item {
+      padding: 0.3rem;
+    }
+    
+    .info p {
+      font-size: 0.65rem; /* 减小字体以适应更小屏幕 */
+    }
+    
+    .remove-btn {
+      width: 22px;
+      height: 22px;
+      font-size: 0.9rem;
+    }
+    
+    .list-header h3 {
+      font-size: 0.9rem;
+    }
+    
+    .list-header small {
+      font-size: 0.6rem;
+    }
+    
+    .Preview-content-wrapper {
+      width: 98%;
+      height: 85vh;
+    }
+    
+    .Preview-header {
+      padding: 0.5rem;
+    }
+    
+    .Preview-header h2 {
+      font-size: 0.75rem;
+    }
+    
+    .nav-btn {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .close-btn {
+      width: 26px;
+      height: 26px;
+      font-size: 1rem;
+    }
+    
+    .Preview-body {
+      padding: 0.4rem;
+    }
   }
 }
